@@ -66,6 +66,7 @@ jobs:
           context: .
           file: poky-mistysom-sdk.Dockerfile
           push: true
+          pull: true
           tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
 
   build-poky-mistysom-sdk-meson:
@@ -102,4 +103,5 @@ jobs:
           context: .
           file: poky-mistysom-sdk-meson.Dockerfile
           push: true
+          pull: true
           tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }}-meson"
