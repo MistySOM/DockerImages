@@ -1,6 +1,6 @@
 FROM ghcr.io/mistysom/poky-mistysom-sdk:3.1.31
 
-ENV POKY_PYTHON="${$OECORE_NATIVE_SYSROOT}/usr/bin/python3"
+ENV POKY_PYTHON="${OECORE_NATIVE_SYSROOT}/usr/bin/python3"
 ENV POKY_PIP="${POKY_PYTHON} -m pip"
 
 RUN ${POKY_PYTHON} -m ensurepip
