@@ -10,6 +10,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: mistysom/poky-mistysom-sdk
   POKY_VERSION: 3.1.31
+  DOCKER_METADATA_OUTPUT_VERSION: 3.1.31
 
 jobs:
   build-poky-mistysom-sdk:
