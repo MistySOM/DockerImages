@@ -1,5 +1,7 @@
 FROM ghcr.io/mistysom/poky-mistysom-sdk:3.1.31
 
+SHELL ["/bin/bash", "-lc"]
+
 ENV POKY_PYTHON="${OECORE_NATIVE_SYSROOT}/usr/bin/python3"
 ENV POKY_PIP="${POKY_PYTHON} -m pip"
 
