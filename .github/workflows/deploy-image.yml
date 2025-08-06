@@ -69,7 +69,9 @@ jobs:
           tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
 
   build-poky-mistysom-sdk-meson:
-    needs: detect-changes
+    needs:
+      - detect-changes
+      - build-poky-mistysom-sdk
     if: ${{ needs.detect-changes.outputs.sdk == 'true' || needs.detect-changes.outputs.meson == 'true' }}    
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
