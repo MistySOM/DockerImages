@@ -1,10 +1,12 @@
-#
-name: Create and publish poky-mistysom-sdk
+name: Create and publish Docker Images
 
 on:
   push:
     branches: ['master']
-    paths: ['poky-mistysom-sdk.Dockerfile', '.github/workflows/deploy-image.yml']
+    paths:
+      - 'poky-mistysom-sdk.Dockerfile'
+      - 'poky-mistysom-sdk-meson.Dockerfile'
+      - '.github/workflows/deploy-image.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -12,7 +14,29 @@ env:
   POKY_VERSION: 3.1.31
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      sdk: ${{ steps.filter.outputs.sdk }}
+      meson: ${{ steps.filter.outputs.meson }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0         # need full history for paths-filter
+      - name: Filter paths
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            sdk:
+              - 'poky-mistysom-sdk.Dockerfile'
+            meson:
+              - 'poky-mistysom-sdk-meson.Dockerfile'
+
   build-poky-mistysom-sdk:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.sdk == 'true' }}
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
@@ -45,7 +69,8 @@ jobs:
           tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
 
   build-poky-mistysom-sdk-meson:
-    needs: build-poky-mistysom-sdk
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.sdk == 'true' || needs.detect-changes.outputs.meson == 'true' }}    
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
