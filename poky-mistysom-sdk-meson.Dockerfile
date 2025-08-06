@@ -6,3 +6,4 @@ ENV POKY_PIP="${POKY_PYTHON} -m pip"
 
 RUN ${POKY_PYTHON} -m ensurepip
 RUN ${POKY_PIP} install meson --upgrade
+RUN ${POKY_PIP} install meson-lsp
