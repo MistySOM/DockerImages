@@ -12,9 +12,12 @@ RUN unzip ${POKY_INSTALL_ZIP_FILENAME}
 RUN chmod +x ${POKY_INSTALL_SH_FILENAME}
 
 FROM python:3.8
-
 LABEL org.opencontainers.image.source=https://github.com/MistySOM/
+SHELL ["/bin/bash", "-c"]
+
 RUN --mount=type=bind,from=poky_builder,source=/builder,target=/mnt \
     /mnt/*.sh -y
+
+RUN echo "source /opt/poky/${POKY_VERSION}/environment-setup-aarch64-poky-linux" >> ~/.bashrc
 
 ENTRYPOINT ["bash"]
