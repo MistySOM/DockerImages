@@ -1,7 +1,7 @@
 FROM ubuntu:latest AS poky_builder
 
 ENV POKY_VERSION=3.1.31
-ENV POKY_INSTALL_ZIP_URL=https://remote.mistywest.com/Download/mh11/rzv2l/${POKY_INSTALL_ZIP_FILENAME}
+ENV POKY_INSTALL_ZIP_URL=https://remote.mistywest.com/Download/mh11/rzv2l/poky-mistysom-${POKY_VERSION}.zip
 
 WORKDIR /builder
 RUN apt-get update && apt-get install -y wget unzip
