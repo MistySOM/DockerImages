@@ -75,4 +75,4 @@ jobs:
           context: .
           file: poky-mistysom-sdk-meson.Dockerfile
           push: true
-          tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }}-meson
+          tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }}-meson"
