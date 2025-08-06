@@ -4,10 +4,12 @@ name: Create and publish poky-mistysom-sdk
 on:
   push:
     branches: ['master']
+    paths: ['poky-mistysom-sdk.Dockerfile', '.github/workflows/deploy-image.yml']
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: mistysom/poky-mistysom-sdk
+  POKY_VERSION: 3.1.31
 
 jobs:
   build-and-push-image:
@@ -46,8 +48,10 @@ jobs:
         with:
           context: .
           file: poky-mistysom-sdk.Dockerfile
-          push: true          
-          tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:3.1.31,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          push: true
+          cache-from: type=gha .
+          cache-to: type=gha,compression=zstd
+          tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
           labels: ${{ steps.meta.outputs.labels }}
       
       # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
