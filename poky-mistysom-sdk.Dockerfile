@@ -7,7 +7,7 @@ ENV POKY_INSTALL_SH_FILENAME=poky-glibc-x86_64-mistysom-image-aarch64-smarc-rzv2
 
 WORKDIR /builder
 RUN apt-get update && apt-get install -y wget unzip
-RUN wget ${POKY_INSTALL_ZIP_URL}
+RUN wget -q ${POKY_INSTALL_ZIP_URL}
 RUN unzip ${POKY_INSTALL_ZIP_FILENAME}
 RUN chmod +x ${POKY_INSTALL_SH_FILENAME}
 

@@ -52,8 +52,6 @@ jobs:
           context: .
           file: poky-mistysom-sdk.Dockerfile
           push: true
-          cache-from: type=gha .
-          cache-to: type=gha,mode=max,compression=zstd
           tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
           labels: ${{ steps.meta.outputs.labels }}
       
