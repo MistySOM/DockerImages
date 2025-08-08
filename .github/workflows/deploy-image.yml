@@ -187,4 +187,4 @@ jobs:
           file: rzv_drp-ai_tvm.Dockerfile
           push: true
           pull: true
-          tags: "${{ env.REGISTRY }}/rzv_drp-ai_tvm:2.6.0,${{ env.REGISTRY }}/rzv_drp-ai_tvm:latest"
+          tags: "${{ env.REGISTRY }}/rzv-drp-ai-tvm:2.6.0,${{ env.REGISTRY }}/rzv-drp-ai-tvm:latest"
