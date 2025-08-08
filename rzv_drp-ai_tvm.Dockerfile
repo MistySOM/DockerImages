@@ -23,6 +23,7 @@ RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
+    git \
     llvm-14-dev \
     libgl1-mesa-dev \
     locales \
@@ -47,7 +48,7 @@ RUN pip3 install tensorflow tflite
 
 # Clone repository
 ENV TVM_ROOT="/drp-ai_tvm"
-RUN git clone --recursive -depth 1 https://github.com/renesas-rz/rzv_drp-ai_tvm.git  ${TVM_ROOT}
+RUN git clone --recursive --depth 1 https://github.com/renesas-rz/rzv_drp-ai_tvm.git  ${TVM_ROOT}
 
 # Set environment variables
 ENV TVM_HOME="${TVM_ROOT}/tvm"
