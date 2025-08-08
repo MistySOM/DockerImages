@@ -107,16 +107,11 @@ jobs:
     needs:
       - detect-changes
       - build-poky-mistysom-sdk
-    # Build meson if:
-    # 1. SDK was changed AND built successfully (for push events), OR
-    # 2. Meson was selected in manual trigger, OR
-    # 3. SDK job was skipped but meson was changed/selected
     if: |
       always() &&
       (
         (needs.detect-changes.outputs.sdk == 'true' && needs.build-poky-mistysom-sdk.result == 'success') ||
-        (needs.detect-changes.outputs.sdk != 'true' && needs.detect-changes.outputs.meson == 'true') ||
-        (needs.detect-changes.outputs.is_manual == 'true' && needs.detect-changes.outputs.meson == 'true')
+        (needs.build-poky-mistysom-sdk.result == 'skipped' && needs.detect-changes.outputs.meson == 'true')
       )
     runs-on: ubuntu-latest
     permissions:
@@ -150,16 +145,11 @@ jobs:
     needs:
       - detect-changes
       - build-poky-mistysom-sdk
-    # Build rzv-tvm if:
-    # 1. SDK was changed AND built successfully (for push events), OR
-    # 2. RZV-TVM was selected in manual trigger, OR
-    # 3. SDK job was skipped but rzv-tvm was changed/selected
     if: |
       always() &&
       (
         (needs.detect-changes.outputs.sdk == 'true' && needs.build-poky-mistysom-sdk.result == 'success') ||
-        (needs.detect-changes.outputs.sdk != 'true' && needs.detect-changes.outputs.rzv-tvm == 'true') ||
-        (needs.detect-changes.outputs.is_manual == 'true' && needs.detect-changes.outputs.rzv-tvm == 'true')
+        (needs.build-poky-mistysom-sdk.result == 'skipped' && needs.detect-changes.outputs.rzv-tvm == 'true')
       )
     runs-on: ubuntu-latest
     permissions:
@@ -187,4 +177,4 @@ jobs:
           file: rzv_drp-ai_tvm.Dockerfile
           push: true
           pull: true
-          tags: "${{ env.REGISTRY }}/rzv-drp-ai-tvm:2.6.0,${{ env.REGISTRY }}/rzv-drp-ai-tvm:latest"
+          tags: "${{ env.REGISTRY }}/mistysom/rzv-drp-ai-tvm:2.6.0,${{ env.REGISTRY }}/mistysom/rzv-drp-ai-tvm:latest"
