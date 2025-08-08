@@ -8,6 +8,28 @@ on:
       - 'poky-mistysom-sdk-meson.Dockerfile'
       - 'rzv_drp-ai_tvm.Dockerfile'
       - '.github/workflows/deploy-image.yml'
+  workflow_dispatch:
+    inputs:
+      build_sdk:
+        description: 'Build SDK image'
+        required: false
+        default: false
+        type: boolean
+      build_meson:
+        description: 'Build Meson image'
+        required: false
+        default: false
+        type: boolean
+      build_rzv_tvm:
+        description: 'Build RZV TVM image'
+        required: false
+        default: false
+        type: boolean
+      build_all:
+        description: 'Build all images (overrides individual selections)'
+        required: false
+        default: false
+        type: boolean
 
 env:
   REGISTRY: ghcr.io
@@ -18,24 +40,37 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      sdk: ${{ steps.filter.outputs.sdk }}
-      meson: ${{ steps.filter.outputs.meson }}
+      sdk: ${{ steps.filter.outputs.sdk || github.event.inputs.build_sdk == 'true' || github.event.inputs.build_all == 'true' }}
+      meson: ${{ steps.filter.outputs.meson || github.event.inputs.build_meson == 'true' || github.event.inputs.build_all == 'true' }}
+      rzv-tvm: ${{ steps.filter.outputs.rzv-tvm || github.event.inputs.build_rzv_tvm == 'true' || github.event.inputs.build_all == 'true' }}
+      is_manual: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0         # need full history for paths-filter
+
       - name: Filter paths
         uses: dorny/paths-filter@v2
         id: filter
+        if: github.event_name != 'workflow_dispatch'
         with:
           filters: |
             sdk:
               - 'poky-mistysom-sdk.Dockerfile'
             meson:
               - 'poky-mistysom-sdk-meson.Dockerfile'
-            tvm:
+            rzv-tvm:
               - 'rzv_drp-ai_tvm.Dockerfile'
+
+      - name: Manual trigger summary
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Manual workflow triggered with:"
+          echo "Build SDK: ${{ github.event.inputs.build_sdk }}"
+          echo "Build Meson: ${{ github.event.inputs.build_meson }}"
+          echo "Build RZV TVM: ${{ github.event.inputs.build_rzv_tvm }}"
+          echo "Build All: ${{ github.event.inputs.build_all }}"
 
   build-poky-mistysom-sdk:
     needs: detect-changes
@@ -72,11 +107,16 @@ jobs:
     needs:
       - detect-changes
       - build-poky-mistysom-sdk
+    # Build meson if:
+    # 1. SDK was changed AND built successfully (for push events), OR
+    # 2. Meson was selected in manual trigger, OR
+    # 3. SDK job was skipped but meson was changed/selected
     if: |
       always() &&
       (
         (needs.detect-changes.outputs.sdk == 'true' && needs.build-poky-mistysom-sdk.result == 'success') ||
-        (needs.detect-changes.outputs.sdk != 'true' && needs.detect-changes.outputs.meson == 'true')
+        (needs.detect-changes.outputs.sdk != 'true' && needs.detect-changes.outputs.meson == 'true') ||
+        (needs.detect-changes.outputs.is_manual == 'true' && needs.detect-changes.outputs.meson == 'true')
       )
     runs-on: ubuntu-latest
     permissions:
@@ -106,15 +146,20 @@ jobs:
           pull: true
           tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POKY_VERSION }}-meson"
 
-  build-rzv_drp-ai_tvm:
+  build-rzv-drp-ai-tvm:
     needs:
       - detect-changes
       - build-poky-mistysom-sdk
+    # Build rzv-tvm if:
+    # 1. SDK was changed AND built successfully (for push events), OR
+    # 2. RZV-TVM was selected in manual trigger, OR
+    # 3. SDK job was skipped but rzv-tvm was changed/selected
     if: |
       always() &&
       (
         (needs.detect-changes.outputs.sdk == 'true' && needs.build-poky-mistysom-sdk.result == 'success') ||
-        (needs.detect-changes.outputs.sdk != 'true' && needs.detect-changes.outputs.rzv-tvm == 'true')
+        (needs.detect-changes.outputs.sdk != 'true' && needs.detect-changes.outputs.rzv-tvm == 'true') ||
+        (needs.detect-changes.outputs.is_manual == 'true' && needs.detect-changes.outputs.rzv-tvm == 'true')
       )
     runs-on: ubuntu-latest
     permissions:
