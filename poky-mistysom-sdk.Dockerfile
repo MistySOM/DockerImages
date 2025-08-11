@@ -24,8 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN --mount=type=bind,from=poky_builder,source=/builder,target=/mnt \
     /mnt/*.sh -y && \
-    ln -s `find /opt -name "cortexa55-poky-linux"` `find /opt -name "cortexa55-poky-linux"`/../aarch64-poky-linux && \
-    rm -rf /opt/poky/${POKY_VERSION}/sysroots/aarch64-poky-linux
+    ln -s `find /opt -name "cortexa55-poky-linux"` `find /opt -name "cortexa55-poky-linux"`/../aarch64-poky-linux
 
 SHELL ["/bin/bash", "-lc"]
 RUN echo source /opt/poky/${POKY_VERSION}/environment-setup-aarch64-poky-linux >> ~/.profile
